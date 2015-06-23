@@ -64,7 +64,7 @@ Sk.misceval.isIndex = function (o) {
     if (Sk.builtin.checkInt(o)) {
         return true;
     }
-    if (Sk.abstr.lookupSpecial(o, "__index__")) {
+    if (Sk.abstr.lookupSpecial(o, Sk.builtin.str.$index)) {
         return true;
     }
     return false;
@@ -98,7 +98,7 @@ Sk.misceval.asIndex = function (o) {
     if (o.constructor === Sk.builtin.bool) {
         return Sk.builtin.asnum$(o);
     }
-    idxfn = Sk.abstr.lookupSpecial(o, "__index__");
+    idxfn = Sk.abstr.lookupSpecial(o, Sk.builtin.str.$index);
     if (idxfn) {
         ret = Sk.misceval.callsim(idxfn, o);
         if (!Sk.builtin.checkInt(ret)) {
@@ -383,12 +383,12 @@ Sk.misceval.richCompareBool = function (v, w, op) {
     // right:reversed-top:left
 
     op2method = {
-        "Eq"   : "__eq__",
-        "NotEq": "__ne__",
-        "Gt"   : "__gt__",
-        "GtE"  : "__ge__",
-        "Lt"   : "__lt__",
-        "LtE"  : "__le__"
+        "Eq"   : Sk.builtin.str.$eq,
+        "NotEq": Sk.builtin.str.$ne,
+        "Gt"   : Sk.builtin.str.$gt,
+        "GtE"  : Sk.builtin.str.$ge,
+        "Lt"   : Sk.builtin.str.$lt,
+        "LtE"  : Sk.builtin.str.$le
     };
 
     method = Sk.abstr.lookupSpecial(v, op2method[op]);
@@ -407,7 +407,7 @@ Sk.misceval.richCompareBool = function (v, w, op) {
         }
     }
 
-    vcmp = Sk.abstr.lookupSpecial(v, "__cmp__");
+    vcmp = Sk.abstr.lookupSpecial(v, Sk.builtin.str.$cmp);
     if (vcmp) {
         try {
             ret = Sk.misceval.callsim(vcmp, v, w);
@@ -436,7 +436,7 @@ Sk.misceval.richCompareBool = function (v, w, op) {
         }
     }
 
-    wcmp = Sk.abstr.lookupSpecial(w, "__cmp__");
+    wcmp = Sk.abstr.lookupSpecial(w, Sk.builtin.str.$cmp);
     if (wcmp) {
         // note, flipped on return value and call
         try {

@@ -265,7 +265,8 @@ Sk.builtin.func.prototype.tp$call = function (args, kw) {
 };
 
 Sk.builtin.func.prototype.tp$getattr = function (key) {
-    return this[key];
+    goog.asserts.assert(key instanceof Sk.builtin.str);
+    return this[key.v];
 };
 Sk.builtin.func.prototype.tp$setattr = function (key, value) {
     this[key] = value;

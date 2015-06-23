@@ -484,7 +484,7 @@ Sk.abstr.sequenceContains = function (seq, ob) {
      *  Look for special method and call it, we have to distinguish between built-ins and 
      *  python objects
      */
-    special = Sk.abstr.lookupSpecial(seq, "__contains__");
+    special = Sk.abstr.lookupSpecial(seq, Sk.builtin.str.$contains);
     if (special != null) {
         // method on builtin, provide this arg
         return Sk.misceval.isTrue(Sk.misceval.callsim(special, seq, ob));
@@ -683,7 +683,7 @@ Sk.abstr.objectFormat = function (obj, format_spec) {
     }
 
     // Find the (unbound!) __format__ method (a borrowed reference)
-    meth = Sk.abstr.lookupSpecial(obj, "__format__");
+    meth = Sk.abstr.lookupSpecial(obj, Sk.builtin.str.$format);
     if (meth == null) {
         throw new Sk.builtin.TypeError("Type " + Sk.abstr.typeName(obj) + "doesn't define __format__");
     }
@@ -803,41 +803,43 @@ Sk.abstr.objectSetItem = function (o, key, v, canSuspend) {
 goog.exportSymbol("Sk.abstr.objectSetItem", Sk.abstr.objectSetItem);
 
 
-Sk.abstr.gattr = function (obj, nameJS, canSuspend) {
+Sk.abstr.gattr = function (obj, name, canSuspend) {
     var ret, f;
     var objname = Sk.abstr.typeName(obj);
 
+    goog.asserts.assert(name instanceof Sk.builtin.str);
+
     if (obj === null) {
-        throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + nameJS + "'");
+        throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + name.v + "'");
     }
 
 
     if (obj.tp$getattr !== undefined) {
-        f = obj.tp$getattr("__getattribute__");
+        f = obj.tp$getattr(Sk.builtin.str.$getattribute);
     }
 
     if (f !== undefined) {
-        ret = Sk.misceval.callsimOrSuspend(f, new Sk.builtin.str(nameJS));
+        ret = Sk.misceval.callsimOrSuspend(f, name);
     }
 
     ret = Sk.misceval.chain(ret, function(ret) {
         var f;
 
         if (ret === undefined && obj.tp$getattr !== undefined) {
-            ret = obj.tp$getattr(nameJS);
+            ret = obj.tp$getattr(name);
 
             if (ret === undefined) {
-                f = obj.tp$getattr("__getattr__");
+                f = obj.tp$getattr(Sk.builtin.str.$getattr);
 
                 if (f !== undefined) {
-                    ret = Sk.misceval.callsimOrSuspend(f, new Sk.builtin.str(nameJS));
+                    ret = Sk.misceval.callsimOrSuspend(f, name);
                 }
             }
         }
         return ret;
     }, function(r) {
         if (r === undefined) {
-            throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + nameJS + "'");
+            throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + name.v + "'");
         }
         return r;
     });
@@ -854,7 +856,7 @@ Sk.abstr.sattr = function (obj, nameJS, data, canSuspend) {
     }
 
     if (obj.tp$getattr !== undefined) {
-        setf = obj.tp$getattr("__setattr__");
+        setf = obj.tp$getattr(Sk.builtin.str.$setattr);
         if (setf !== undefined) {
             r = Sk.misceval.callsimOrSuspend(setf, new Sk.builtin.str(nameJS), data);
             return canSuspend ? r : Sk.misceval.retryOptionalSuspensionOrThrow(r);
@@ -904,7 +906,7 @@ Sk.abstr.iter = function(obj) {
     var seqIter = function (obj) {
         this.idx = 0;
         this.myobj = obj;
-        this.getitem = Sk.abstr.lookupSpecial(obj, "__getitem__");
+        this.getitem = Sk.abstr.lookupSpecial(obj, Sk.builtin.str.$getitem);
         this.tp$iternext = function () {
             var ret;
             try {
@@ -922,7 +924,7 @@ Sk.abstr.iter = function(obj) {
     };
 
     if (obj.tp$getattr) {
-        iter =  Sk.abstr.lookupSpecial(obj,"__iter__");
+        iter =  Sk.abstr.lookupSpecial(obj, Sk.builtin.str.$iter);
         if (iter) {
             return Sk.misceval.callsim(iter,obj);
         }
@@ -935,7 +937,7 @@ Sk.abstr.iter = function(obj) {
             }
         } catch (e) { }
     }
-    getit = Sk.abstr.lookupSpecial(obj, "__getitem__");
+    getit = Sk.abstr.lookupSpecial(obj, Sk.builtin.str.$getitem);
     if (getit) {
         // create internal iterobject if __getitem__
         return new seqIter(obj);
@@ -954,6 +956,9 @@ goog.exportSymbol("Sk.abstr.iter", Sk.abstr.iter);
 Sk.abstr.lookupSpecial = function(op, str) {
     var res;
     var obtp;
+
+    goog.asserts.assert(str instanceof Sk.builtin.str);
+
     if (op.ob$type) {
         obtp = op.ob$type;
     } else {

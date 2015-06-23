@@ -54,7 +54,7 @@ function runit(myDiv) {
                 return Sk.importMainWithBody("<stdin>",true,prog,true);
        });
        myPromise.then(function(mod) {}, function(err) {
-           console.log(err.toString());
+           console.log(err.toString(), err);
             });
 }
 </script>

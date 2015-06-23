@@ -29,8 +29,10 @@ Sk.builtin.object.prototype.GenericGetAttr = function (name) {
     var descr;
     var tp;
     var dict;
-    var pyName = new Sk.builtin.str(name);
-    goog.asserts.assert(typeof name === "string");
+    var jname;
+
+    goog.asserts.assert(name instanceof Sk.builtin.str);
+    jname = name.v;
 
     tp = this.ob$type;
     goog.asserts.assert(tp !== undefined, "object has no ob$type!");
@@ -51,16 +53,16 @@ Sk.builtin.object.prototype.GenericGetAttr = function (name) {
     // todo; assert? force?
     if (dict) {
         if (dict.mp$lookup) {
-            res = dict.mp$lookup(pyName);
+            res = dict.mp$lookup(name);
         } else if (dict.mp$subscript) {
             try {
-                res = dict.mp$subscript(pyName);
+                res = dict.mp$subscript(name);
             } catch (x) {
                 res = undefined;
             }
         } else if (typeof dict === "object") {
             // todo; definitely the wrong place for this. other custom tp$getattr won't work on object -- bnm -- implemented custom __getattr__ in abstract.js
-            res = dict[name];
+            res = dict[jname];
         }
         if (res !== undefined) {
             return res;
@@ -81,7 +83,7 @@ Sk.builtin.object.prototype.GenericGetAttr = function (name) {
 goog.exportSymbol("Sk.builtin.object.prototype.GenericGetAttr", Sk.builtin.object.prototype.GenericGetAttr);
 
 Sk.builtin.object.prototype.GenericPythonGetAttr = function(self, name) {
-    return Sk.builtin.object.prototype.GenericGetAttr.call(self, name.v);
+    return Sk.builtin.object.prototype.GenericGetAttr.call(self, name);
 };
 goog.exportSymbol("Sk.builtin.object.prototype.GenericPythonGetAttr", Sk.builtin.object.prototype.GenericPythonGetAttr);
 

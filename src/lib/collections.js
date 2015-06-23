@@ -557,7 +557,8 @@ var $builtinmodule = function (name) {
         };
 
         cons.prototype.tp$getattr = function (name) {
-            var i = flds.indexOf(name);
+            var nameJS = name.v;
+            var i = flds.indexOf(nameJS);
             if (i >= 0) {
                 return this.v[i];
             }

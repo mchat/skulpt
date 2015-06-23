@@ -232,7 +232,7 @@ Sk.builtin.round = function round (number, ndigits) {
     }
 
     // try calling internal magic method
-    special = Sk.abstr.lookupSpecial(number, "__round__");
+    special = Sk.abstr.lookupSpecial(number, Sk.builtin.str.$round);
     if (special != null) {
         // method on builtin, provide this arg
         return Sk.misceval.callsim(special, number, ndigits);
@@ -552,7 +552,7 @@ Sk.builtin.dir = function dir (x) {
     var _seq;
 
     // try calling magic method
-    var special = Sk.abstr.lookupSpecial(x, "__dir__");
+    var special = Sk.abstr.lookupSpecial(x, Sk.builtin.str.$dir);
     if(special != null) {
         // method on builtin, provide this arg
         _seq = Sk.misceval.callsim(special, x);
@@ -758,7 +758,7 @@ Sk.builtin.getattr = function getattr (obj, name, default_) {
         throw new Sk.builtin.TypeError("attribute name must be string");
     }
 
-    ret = obj.tp$getattr(name.v);
+    ret = obj.tp$getattr(name);
     if (ret === undefined) {
         if (default_ !== undefined) {
             return default_;
@@ -1000,7 +1000,7 @@ Sk.builtin.hasattr = function hasattr (obj, attr) {
     }
 
     if (obj.tp$getattr) {
-        if (obj.tp$getattr(attr.v)) {
+        if (obj.tp$getattr(attr)) {
             return Sk.builtin.bool.true$;
         } else {
             return Sk.builtin.bool.false$;

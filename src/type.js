@@ -124,7 +124,7 @@ Sk.builtin.type = function (name, bases, dict) {
                 }
             }
 
-            init = Sk.builtin.type.typeLookup(self.ob$type, "__init__");
+            init = Sk.builtin.type.typeLookup(self.ob$type, Sk.builtin.str.$init);
             if (init !== undefined) {
                 // return should be None or throw a TypeError otherwise
                 args.unshift(self);
@@ -230,7 +230,7 @@ Sk.builtin.type = function (name, bases, dict) {
         klass.prototype["$r"] = function () {
             var cname;
             var mod;
-            var reprf = this.tp$getattr("__repr__");
+            var reprf = this.tp$getattr(Sk.builtin.str.$repr);
             if (reprf !== undefined && reprf.im_func !== Sk.builtin.object.prototype["__repr__"]) {
                 return Sk.misceval.apply(reprf, undefined, undefined, undefined, []);
             }
@@ -251,7 +251,7 @@ Sk.builtin.type = function (name, bases, dict) {
             }
         };
         klass.prototype.tp$str = function () {
-            var strf = this.tp$getattr("__str__");
+            var strf = this.tp$getattr(Sk.builtin.str.$str);
             if (strf !== undefined && strf.im_func !== Sk.builtin.object.prototype["__str__"]) {
                 return Sk.misceval.apply(strf, undefined, undefined, undefined, []);
             }
@@ -265,7 +265,7 @@ Sk.builtin.type = function (name, bases, dict) {
         };
         klass.prototype.tp$length = function () {
             var tname;
-            var lenf = this.tp$getattr("__len__");
+            var lenf = this.tp$getattr(Sk.builtin.str.$len);
             if (lenf !== undefined) {
                 return Sk.misceval.apply(lenf, undefined, undefined, undefined, []);
             }
@@ -273,7 +273,7 @@ Sk.builtin.type = function (name, bases, dict) {
             throw new Sk.builtin.AttributeError(tname + " instance has no attribute '__len__'");
         };
         klass.prototype.tp$call = function (args, kw) {
-            var callf = this.tp$getattr("__call__");
+            var callf = this.tp$getattr(Sk.builtin.str.$call);
             /* todo; vararg kwdict */
             if (callf) {
                 return Sk.misceval.apply(callf, undefined, undefined, kw, args);
@@ -282,7 +282,7 @@ Sk.builtin.type = function (name, bases, dict) {
         };
         klass.prototype.tp$iter = function () {
             var ret;
-            var iterf = this.tp$getattr("__iter__");
+            var iterf = this.tp$getattr(Sk.builtin.str.$iter);
             var tname = Sk.abstr.typeName(this);
             if (iterf) {
                 ret = Sk.misceval.callsim(iterf);
@@ -291,7 +291,7 @@ Sk.builtin.type = function (name, bases, dict) {
             throw new Sk.builtin.TypeError("'" + tname + "' object is not iterable");
         };
         klass.prototype.tp$iternext = function () {
-            var iternextf = this.tp$getattr("next");
+            var iternextf = this.tp$getattr(Sk.builtin.str.$next);
             var ret;
             if (iternextf) {
                 try {
@@ -308,7 +308,7 @@ Sk.builtin.type = function (name, bases, dict) {
         };
 
         klass.prototype.tp$getitem = function (key, canSuspend) {
-            var getf = this.tp$getattr("__getitem__"), r;
+            var getf = this.tp$getattr(Sk.builtin.str.$getitem), r;
             if (getf !== undefined) {
                 r = Sk.misceval.applyOrSuspend(getf, undefined, undefined, undefined, [key]);
                 return canSuspend ? r : Sk.misceval.retryOptionalSuspensionOrThrow(r);
@@ -316,7 +316,7 @@ Sk.builtin.type = function (name, bases, dict) {
             throw new Sk.builtin.TypeError("'" + Sk.abstr.typeName(this) + "' object does not support indexing");
         };
         klass.prototype.tp$setitem = function (key, value, canSuspend) {
-            var setf = this.tp$getattr("__setitem__"), r;
+            var setf = this.tp$getattr(Sk.builtin.str.$setitem), r;
             if (setf !== undefined) {
                 r = Sk.misceval.applyOrSuspend(setf, undefined, undefined, undefined, [key, value]);
                 return canSuspend ? r : Sk.misceval.retryOptionalSuspensionOrThrow(r);
@@ -416,8 +416,13 @@ Sk.builtin.type["$r"] = function () {
 Sk.builtin.type.prototype.tp$getattr = function (name) {
     var res;
     var tp = this;
-    var descr = Sk.builtin.type.typeLookup(tp, name);
+    var descr;
     var f;
+
+    goog.asserts.assert(name instanceof Sk.builtin.str);
+
+    descr = Sk.builtin.type.typeLookup(tp, name);
+
     //print("type.tpgetattr descr", descr, descr.tp$name, descr.func_code, name);
     if (descr !== undefined && descr !== null && descr.ob$type !== undefined) {
         f = descr.ob$type.tp$descr_get;
@@ -426,7 +431,7 @@ Sk.builtin.type.prototype.tp$getattr = function (name) {
     }
 
     if (this["$d"]) {
-        res = this["$d"].mp$lookup(new Sk.builtin.str(name));
+        res = this["$d"].mp$lookup(name);
         if (res !== undefined) {
             return res;
         }
@@ -451,31 +456,35 @@ Sk.builtin.type.prototype.tp$setattr = function (name, value) {
 
 Sk.builtin.type.typeLookup = function (type, name) {
     var mro = type.tp$mro;
-    var pyname = new Sk.builtin.str(name);
     var base;
     var res;
     var i;
+    var jname;
+
+    goog.asserts.assert(name instanceof Sk.builtin.str);
+
+    jname = name.v;
 
     // todo; probably should fix this, used for builtin types to get stuff
     // from prototype
     if (!mro) {
         if (type.prototype) {
-            return type.prototype[name];
+            return type.prototype[jname];
         }
         return undefined;
     }
 
     for (i = 0; i < mro.v.length; ++i) {
         base = mro.v[i];
-        if (base.hasOwnProperty(name)) {
-            return base[name];
+        if (base.hasOwnProperty(jname)) {
+            return base[jname];
         }
-        res = base["$d"].mp$lookup(pyname);
+        res = base["$d"].mp$lookup(name);
         if (res !== undefined) {
             return res;
         }
-        if (base.prototype && base.prototype[name] !== undefined) {
-            return base.prototype[name];
+        if (base.prototype && base.prototype[jname] !== undefined) {
+            return base.prototype[jname];
         }
     }
 

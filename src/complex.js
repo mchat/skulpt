@@ -90,7 +90,7 @@ Sk.builtin.complex = function (real, imag) {
             return true;
         }
 
-        if(Sk.builtin.type.typeLookup(op.ob$type, "__float__") !== undefined) {
+        if(Sk.builtin.type.typeLookup(op.ob$type, Sk.builtin.str.$float_) !== undefined) {
             return true;
         }
     };
@@ -204,7 +204,6 @@ Sk.builtin.complex._isNegativeZero = function (val) {
  * Internal method to check if op has __complex__
  */
 Sk.builtin.complex.try_complex_special_method = function (op) {
-    var complexstr = new Sk.builtin.str("__complex__");
     var f; // PyObject
     var res;
 
@@ -214,7 +213,7 @@ Sk.builtin.complex.try_complex_special_method = function (op) {
     }
 
     // the lookup special method does already all the magic
-    f = Sk.abstr.lookupSpecial(op, "__complex__");
+    f = Sk.abstr.lookupSpecial(op, Sk.builtin.str.$complex);
 
     if (f != null) {
         // method on builtin, provide this arg
@@ -409,7 +408,7 @@ Sk.builtin.complex.complex_subtype_from_string = function (val) {
     _PyHASH_IMAG refers to _PyHASH_MULTIPLIER which refers to 1000003
  */
 Sk.builtin.complex.prototype.tp$hash = function () {
-    return new Sk.builtin.int_(this.tp$getattr("imag").v * 1000003 + this.tp$getattr("real").v);
+    return new Sk.builtin.int_(this.tp$getattr(Sk.builtin.str.$imag).v * 1000003 + this.tp$getattr(Sk.builtin.str.$real).v);
 };
 
 Sk.builtin.complex.prototype.nb$add = function (other) {
@@ -418,8 +417,8 @@ Sk.builtin.complex.prototype.nb$add = function (other) {
 
     other = Sk.builtin.complex.check_number_or_complex(other);
 
-    real = this.tp$getattr("real").v + other.tp$getattr("real").v;
-    imag = this.tp$getattr("imag").v + other.tp$getattr("imag").v;
+    real = this.tp$getattr(Sk.builtin.str.$real).v + other.tp$getattr(Sk.builtin.str.$real).v;
+    imag = this.tp$getattr(Sk.builtin.str.$imag).v + other.tp$getattr(Sk.builtin.str.$imag).v;
 
     return new Sk.builtin.complex(new Sk.builtin.float_(real), new Sk.builtin.float_(imag));
 };
@@ -693,8 +692,8 @@ Sk.builtin.complex.prototype.tp$richcompare = function (w, op) {
 
     // assert(PyComplex_Check(v)));
     i = Sk.builtin.complex.check_number_or_complex(this);
-    var _real = i.tp$getattr("real").v;
-    var _imag = i.tp$getattr("imag").v;
+    var _real = i.tp$getattr(Sk.builtin.str.$real).v;
+    var _imag = i.tp$getattr(Sk.builtin.str.$imag).v;
 
     if (Sk.builtin.checkInt(w)) {
         /* Check for 0.0 imaginary part first to avoid the rich
@@ -713,8 +712,8 @@ Sk.builtin.complex.prototype.tp$richcompare = function (w, op) {
         equal = (_real === Sk.builtin.float_.PyFloat_AsDouble(w) && _imag === 0.0);
     } else if (Sk.builtin.complex._complex_check(w)) {
         // ToDo: figure if we need to call to_complex
-        var w_real = w.tp$getattr("real").v;
-        var w_imag = w.tp$getattr("imag").v;
+        var w_real = w.tp$getattr(Sk.builtin.str.$real).v;
+        var w_imag = w.tp$getattr(Sk.builtin.str.$imag).v;
         equal = _real === w_real && _imag === w_imag;
     } else {
         return Sk.builtin.NotImplemented.NotImplemented$;
@@ -781,13 +780,8 @@ Sk.builtin.complex.prototype._internalGenericGetAttr = Sk.builtin.object.prototy
  *
  */
 Sk.builtin.complex.prototype.tp$getattr = function (name) {
-    if (name != null && (Sk.builtin.checkString(name) || typeof name === "string")) {
-        var _name = name;
-
-        // get javascript string
-        if (Sk.builtin.checkString(name)) {
-            _name = Sk.ffi.remapToJs(name);
-        }
+    if (name != null && Sk.builtin.checkString(name)) {
+        var _name =  Sk.ffi.remapToJs(name);
 
         if (_name === "real" || _name === "imag") {
             return this[_name];
@@ -952,7 +946,7 @@ Sk.builtin.complex.prototype.__abs__  = new Sk.builtin.func(function (self) {
 });
 
 Sk.builtin.complex.prototype.__bool__   = new Sk.builtin.func(function (self) {
-    return new Sk.builtin.bool( self.tp$getattr("real").v || self.tp$getattr("real").v);
+    return new Sk.builtin.bool( self.tp$getattr(Sk.builtin.str.$real).v || self.tp$getattr(Sk.builtin.str.$real).v);
 });
 
 Sk.builtin.complex.prototype.__truediv__ = new Sk.builtin.func(function (self, other){

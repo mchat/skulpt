@@ -710,11 +710,11 @@ Compiler.prototype.vexpr = function (e, data, augvar, augsubs) {
             mangled = fixReservedNames(mangled);
             switch (e.ctx) {
                 case AugLoad:
-                    out("$ret = Sk.abstr.gattr(", augvar, ",'", mangled, "', true);");
+                    out("$ret = Sk.abstr.gattr(", augvar, ", new Sk.builtin.str('", mangled, "'), true);");
                     this._checkSuspension(e);
                     return this._gr("lattr", "$ret");
                 case Load:
-                    out("$ret = Sk.abstr.gattr(", val, ",'", mangled, "', true);");
+                    out("$ret = Sk.abstr.gattr(", val, ", new Sk.builtin.str('", mangled, "'), true);");
                     this._checkSuspension(e);
                     return this._gr("lattr", "$ret");
                 case AugStore:
@@ -1308,7 +1308,7 @@ Compiler.prototype.cimportas = function (name, asname, mod) {
         while (dotLoc !== -1) {
             dotLoc = src.indexOf(".");
             attr = dotLoc !== -1 ? src.substr(0, dotLoc) : src;
-            cur = this._gr("lattr", "Sk.abstr.gattr(", cur, ",'", attr, "')");
+            cur = this._gr("lattr", "Sk.abstr.gattr(", cur, ", new Sk.builtin.str('", attr, "'))");
             src = src.substr(dotLoc + 1);
         }
     }
@@ -1371,7 +1371,7 @@ Compiler.prototype.cfromimport = function (s) {
         }
 
         //out("print(\"getting Sk.abstr.gattr(", mod, ",", alias.name["$r"]().v, ")\");");
-        got = this._gr("item", "Sk.abstr.gattr(", mod, ",", alias.name["$r"]().v, ")");
+        got = this._gr("item", "Sk.abstr.gattr(", mod, ", new Sk.builtin.str(", alias.name["$r"]().v, "))");
         //out("print('got');");
         storeName = alias.name;
         if (alias.asname) {
