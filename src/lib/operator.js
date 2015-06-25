@@ -8,32 +8,32 @@ var $builtinmodule = function (name) {
     var mod = {};
 
     mod.lt = new Sk.builtin.func(function (a, b) {
-        return Sk.builtin.bool(Sk.misceval.richCompareBool(a, b, 'Lt'));
+        return Sk.misceval.richCompareBool(a, b, 'Lt');
     });
     mod.__lt__ = mod.lt;
 
     mod.le = new Sk.builtin.func(function (a, b) {
-        return Sk.builtin.bool(Sk.misceval.richCompareBool(a, b, 'LtE'));
+        return Sk.misceval.richCompareBool(a, b, 'LtE');
     });
     mod.__le__ = mod.le;
 
     mod.eq = new Sk.builtin.func(function (a, b) {
-        return Sk.builtin.bool(Sk.misceval.richCompareBool(a, b, 'Eq'));
+        return Sk.misceval.richCompareBool(a, b, 'Eq');
     });
     mod.__eq__ = mod.eq;
 
     mod.ne = new Sk.builtin.func(function (a, b) {
-        return Sk.builtin.bool(Sk.misceval.richCompareBool(a, b, 'NotEq'));
+        return Sk.misceval.richCompareBool(a, b, 'NotEq');
     });
     mod.__ne__ = mod.ne;
 
     mod.ge = new Sk.builtin.func(function (a, b) {
-        return Sk.builtin.bool(Sk.misceval.richCompareBool(a, b, 'GtE'));
+        return Sk.misceval.richCompareBool(a, b, 'GtE');
     });
     mod.__ge__ = mod.ge;
 
     mod.gt = new Sk.builtin.func(function (a, b) {
-        return Sk.builtin.bool(Sk.misceval.richCompareBool(a, b, 'Gt'));
+        return Sk.misceval.richCompareBool(a, b, 'Gt');
     });
     mod.__gt__ = mod.gt;
 
@@ -46,11 +46,11 @@ var $builtinmodule = function (name) {
     });
 
     mod.is_ = new Sk.builtin.func(function (a, b) {
-        return Sk.builtin.bool(Sk.misceval.richCompareBool(a, b, 'Is'));
+        return Sk.misceval.richCompareBool(a, b, 'Is');
     });
 
     mod.is_not = new Sk.builtin.func(function (a, b) {
-        return Sk.builtin.bool(Sk.misceval.richCompareBool(a, b, 'IsNot'));
+        return Sk.misceval.richCompareBool(a, b, 'IsNot');
     });
 
     mod.abs = new Sk.builtin.func(function (obj) {

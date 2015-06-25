@@ -202,7 +202,7 @@ Sk.builtin.list.prototype.tp$richcompare = function (w, op) {
 
     for (i = 0; i < vl && i < wl; ++i) {
         k = Sk.misceval.richCompareBool(v[i], w[i], "Eq");
-        if (!k) {
+        if (!Sk.misceval.isTrue(k)) {
             break;
         }
     }
@@ -238,7 +238,7 @@ Sk.builtin.list.prototype.tp$richcompare = function (w, op) {
     }
 
     // or, compare the differing element using the proper operator
-    return Sk.misceval.richCompareBool(v[i], w[i], op);
+    return Sk.misceval.isTrue(Sk.misceval.richCompareBool(v[i], w[i], op));
 };
 
 Sk.builtin.list.prototype.tp$iter = Sk.builtin.list.prototype.list_iter_;
@@ -299,7 +299,7 @@ Sk.builtin.list.prototype.sq$contains = function (item) {
     var it, i;
 
     for (it = this.tp$iter(), i = it.tp$iternext(); i !== undefined; i = it.tp$iternext()) {
-        if (Sk.misceval.richCompareBool(i, item, "Eq")) {
+        if (Sk.misceval.isTrue(Sk.misceval.richCompareBool(i, item, "Eq"))) {
             return true;
         }
     }
@@ -450,11 +450,11 @@ Sk.builtin.list.prototype.list_sort_ = function (self, cmp, key, reverse) {
         if (has_cmp) {
             timsort.lt = function (a, b) {
                 var res = Sk.misceval.callsim(cmp, a[0], b[0]);
-                return Sk.misceval.richCompareBool(res, zero, "Lt");
+                return Sk.misceval.isTrue(Sk.misceval.richCompareBool(res, zero, "Lt"));
             };
         } else {
             timsort.lt = function (a, b) {
-                return Sk.misceval.richCompareBool(a[0], b[0], "Lt");
+                return Sk.misceval.isTrue(Sk.misceval.richCompareBool(a[0], b[0], "Lt"));
             };
         }
         for (i = 0; i < timsort.listlength; i++) {
@@ -465,7 +465,7 @@ Sk.builtin.list.prototype.list_sort_ = function (self, cmp, key, reverse) {
     } else if (has_cmp) {
         timsort.lt = function (a, b) {
             var res = Sk.misceval.callsim(cmp, a, b);
-            return Sk.misceval.richCompareBool(res, zero, "Lt");
+            return Sk.misceval.isTrue(Sk.misceval.richCompareBool(res, zero, "Lt"));
         };
     }
 
@@ -614,7 +614,7 @@ Sk.builtin.list.prototype["index"] = new Sk.builtin.func(function (self, item, s
     }
 
     for (i = start; i < stop; ++i) {
-        if (Sk.misceval.richCompareBool(obj[i], item, "Eq")) {
+        if (Sk.misceval.isTrue(Sk.misceval.richCompareBool(obj[i], item, "Eq"))) {
             return new Sk.builtin.int_(i);
         }
     }
@@ -632,7 +632,7 @@ Sk.builtin.list.prototype["count"] = new Sk.builtin.func(function (self, item) {
     obj = self.v;
     count = 0;
     for (i = 0; i < len; ++i) {
-        if (Sk.misceval.richCompareBool(obj[i], item, "Eq")) {
+        if (Sk.misceval.isTrue(Sk.misceval.richCompareBool(obj[i], item, "Eq"))) {
             count += 1;
         }
     }

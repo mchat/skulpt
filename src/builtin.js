@@ -271,7 +271,7 @@ Sk.builtin.min = function min () {
     }
 
     for (i = 1; i < args.length; ++i) {
-        if (Sk.misceval.richCompareBool(args[i], lowest, "Lt")) {
+        if (Sk.misceval.isTrue(Sk.misceval.richCompareBool(args[i], lowest, "Lt"))) {
             lowest = args[i];
         }
     }
@@ -292,7 +292,7 @@ Sk.builtin.max = function max () {
     }
 
     for (i = 1; i < args.length; ++i) {
-        if (Sk.misceval.richCompareBool(args[i], highest, "Gt")) {
+        if (Sk.misceval.isTrue(Sk.misceval.richCompareBool(args[i], highest, "Gt"))) {
             highest = args[i];
         }
     }

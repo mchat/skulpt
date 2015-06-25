@@ -7,7 +7,11 @@ Sk.builtin.sorted = function sorted (iterable, cmp, key, reverse) {
     if (key !== undefined && !(key instanceof Sk.builtin.none)) {
         if (cmp instanceof Sk.builtin.none || cmp === undefined) {
             compare_func = function (a, b) {
-                return Sk.misceval.richCompareBool(a[0], b[0], "Lt") ? new Sk.builtin.int_(-1) : new Sk.builtin.int_(0);
+                if (Sk.misceval.isTrue(Sk.misceval.richCompareBool(a[0], b[0], "Lt"))) {
+                    return new Sk.builtin.int_(-1);
+                } else {
+                    return new Sk.builtin.int_(0);
+                }
             };
         } else {
             compare_func = function (a, b) {

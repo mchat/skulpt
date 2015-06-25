@@ -477,7 +477,7 @@ Sk.abstr.sequenceContains = function (seq, ob) {
     var special;
 
     if (seq.sq$contains) {
-        return seq.sq$contains(ob);
+        return Sk.misceval.isTrue(seq.sq$contains(ob));
     }
 
     /** 
@@ -496,7 +496,7 @@ Sk.abstr.sequenceContains = function (seq, ob) {
     }
 
     for (it = Sk.abstr.iter(seq), i = it.tp$iternext(); i !== undefined; i = it.tp$iternext()) {
-        if (Sk.misceval.richCompareBool(i, ob, "Eq")) {
+        if (Sk.misceval.isTrue(Sk.misceval.richCompareBool(i, ob, "Eq"))) {
             return true;
         }
     }
@@ -523,7 +523,7 @@ Sk.abstr.sequenceGetIndexOf = function (seq, ob) {
         index = 0;
         for (it = Sk.abstr.iter(seq), i = it.tp$iternext();
              i !== undefined; i = it.tp$iternext()) {
-            if (Sk.misceval.richCompareBool(ob, i, "Eq")) {
+            if (Sk.misceval.isTrue(Sk.misceval.richCompareBool(ob, i, "Eq"))) {
                 return new Sk.builtin.int_(index);
             }
             index += 1;
@@ -546,7 +546,7 @@ Sk.abstr.sequenceGetCountOf = function (seq, ob) {
         count = 0;
         for (it = Sk.abstr.iter(seq), i = it.tp$iternext();
              i !== undefined; i = it.tp$iternext()) {
-            if (Sk.misceval.richCompareBool(ob, i, "Eq")) {
+            if (Sk.misceval.isTrue(Sk.misceval.richCompareBool(ob, i, "Eq"))) {
                 count += 1;
             }
         }

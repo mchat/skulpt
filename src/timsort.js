@@ -17,7 +17,7 @@ Sk.builtin.timSort = function (list, length) {
 };
 
 Sk.builtin.timSort.prototype.lt = function (a, b) {
-    return Sk.misceval.richCompareBool(a, b, "Lt");
+    return Sk.misceval.isTrue(Sk.misceval.richCompareBool(a, b, "Lt"));
 };
 
 Sk.builtin.timSort.prototype.le = function (a, b) {

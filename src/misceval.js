@@ -270,26 +270,26 @@ Sk.misceval.richCompareBool = function (v, w, op) {
         if (v_type === Sk.builtin.none.prototype.ob$type) {
             switch (op) {
                 case "Lt":
-                    return true;
+                    return Sk.builtin.bool.true$;
                 case "LtE":
-                    return true;
+                    return Sk.builtin.bool.true$;
                 case "Gt":
-                    return false;
+                    return Sk.builtin.bool.false$;
                 case "GtE":
-                    return false;
+                    return Sk.builtin.bool.false$;
             }
         }
 
         if (w_type === Sk.builtin.none.prototype.ob$type) {
             switch (op) {
                 case "Lt":
-                    return false;
+                    return Sk.builtin.bool.false$;
                 case "LtE":
-                    return false;
+                    return Sk.builtin.bool.false$;
                 case "Gt":
-                    return true;
+                    return Sk.builtin.bool.true$;
                 case "GtE":
-                    return true;
+                    return Sk.builtin.bool.true$;
             }
         }
 
@@ -297,26 +297,26 @@ Sk.misceval.richCompareBool = function (v, w, op) {
         if (v_num_type !== -1 && w_seq_type !== -1) {
             switch (op) {
                 case "Lt":
-                    return true;
+                    return Sk.builtin.bool.true$;
                 case "LtE":
-                    return true;
+                    return Sk.builtin.bool.true$;
                 case "Gt":
-                    return false;
+                    return Sk.builtin.bool.false$;
                 case "GtE":
-                    return false;
+                    return Sk.builtin.bool.false$;
             }
         }
 
         if (v_seq_type !== -1 && w_num_type !== -1) {
             switch (op) {
                 case "Lt":
-                    return false;
+                    return Sk.builtin.bool.false$;
                 case "LtE":
-                    return false;
+                    return Sk.builtin.bool.false$;
                 case "Gt":
-                    return true;
+                    return Sk.builtin.bool.true$;
                 case "GtE":
-                    return true;
+                    return Sk.builtin.bool.true$;
             }
         }
 
@@ -325,13 +325,13 @@ Sk.misceval.richCompareBool = function (v, w, op) {
         if (v_seq_type !== -1 && w_seq_type !== -1) {
             switch (op) {
                 case "Lt":
-                    return v_seq_type < w_seq_type;
+                    return new Sk.builtin.bool(v_seq_type < w_seq_type);
                 case "LtE":
-                    return v_seq_type <= w_seq_type;
+                    return new Sk.builtin.bool(v_seq_type <= w_seq_type);
                 case "Gt":
-                    return v_seq_type > w_seq_type;
+                    return new Sk.builtin.bool(v_seq_type > w_seq_type);
                 case "GtE":
-                    return v_seq_type >= w_seq_type;
+                    return new Sk.builtin.bool(v_seq_type >= w_seq_type);
             }
         }
     }
@@ -340,33 +340,33 @@ Sk.misceval.richCompareBool = function (v, w, op) {
     // handle identity and membership comparisons
     if (op === "Is") {
         if (v instanceof Sk.builtin.int_ && w instanceof Sk.builtin.int_) {
-            return v.numberCompare(w) === 0;
+            return new Sk.builtin.bool(v.numberCompare(w) === 0);
         } else if (v instanceof Sk.builtin.float_ && w instanceof Sk.builtin.float_) {
-            return v.numberCompare(w) === 0;
+            return new Sk.builtin.bool(v.numberCompare(w) === 0);
         } else if (v instanceof Sk.builtin.lng && w instanceof Sk.builtin.lng) {
-            return v.longCompare(w) === 0;
+            return new Sk.builtin.bool(v.longCompare(w) === 0);
         }
 
-        return v === w;
+        return new Sk.builtin.bool(v === w);
     }
 
     if (op === "IsNot") {
         if (v instanceof Sk.builtin.int_ && w instanceof Sk.builtin.int_) {
-            return v.numberCompare(w) !== 0;
+            return new Sk.builtin.bool(v.numberCompare(w) !== 0);
         } else if (v instanceof Sk.builtin.float_ && w instanceof Sk.builtin.float_) {
-            return v.numberCompare(w) !== 0;
+            return new Sk.builtin.bool(v.numberCompare(w) !== 0);
         }else if (v instanceof Sk.builtin.lng && w instanceof Sk.builtin.lng) {
-            return v.longCompare(w) !== 0;
+            return new Sk.builtin.bool(v.longCompare(w) !== 0);
         }
 
-        return v !== w;
+        return new Sk.builtin.bool(v !== w);
     }
 
     if (op === "In") {
-        return Sk.misceval.isTrue(Sk.abstr.sequenceContains(w, v));
+        return new Sk.builtin.bool(Sk.abstr.sequenceContains(w, v));
     }
     if (op === "NotIn") {
-        return !Sk.misceval.isTrue(Sk.abstr.sequenceContains(w, v));
+        return new Sk.builtin.bool(!Sk.abstr.sequenceContains(w, v));
     }
 
     // Call Javascript shortcut method if exists for either object
@@ -384,7 +384,7 @@ Sk.misceval.richCompareBool = function (v, w, op) {
     v_has_shortcut = v.constructor.prototype.hasOwnProperty(shortcut);
     if (v_has_shortcut) {
         if ((ret = v[shortcut](w)) !== Sk.builtin.NotImplemented.NotImplemented$) {
-            return Sk.misceval.isTrue(ret);
+            return ret;
         }
     }
 
@@ -393,20 +393,20 @@ Sk.misceval.richCompareBool = function (v, w, op) {
     if (w_has_shortcut) {
 
         if ((ret = w[swapped_shortcut](v)) !== Sk.builtin.NotImplemented.NotImplemented$) {
-            return Sk.misceval.isTrue(ret);
+            return ret;
         }
     }
 
     // use comparison methods if they are given for either object
     if (v.tp$richcompare && (ret = v.tp$richcompare(w, op)) !== undefined) {
         if (ret != Sk.builtin.NotImplemented.NotImplemented$) {
-            return Sk.misceval.isTrue(ret);
+            return new Sk.builtin.bool(ret);
         }
     }
 
     if (w.tp$richcompare && (ret = w.tp$richcompare(v, Sk.misceval.swappedOp_[op])) !== undefined) {
         if (ret != Sk.builtin.NotImplemented.NotImplemented$) {
-            return Sk.misceval.isTrue(ret);
+            return new Sk.builtin.bool(ret);
         }
     }
 
@@ -427,7 +427,7 @@ Sk.misceval.richCompareBool = function (v, w, op) {
     if (method && !v_has_shortcut) {
         ret = Sk.misceval.callsim(method, v, w);
         if (ret != Sk.builtin.NotImplemented.NotImplemented$) {
-            return Sk.misceval.isTrue(ret);
+            return ret;
         }
     }
 
@@ -435,7 +435,7 @@ Sk.misceval.richCompareBool = function (v, w, op) {
     if (swapped_method && !w_has_shortcut) {
         ret = Sk.misceval.callsim(swapped_method, w, v);
         if (ret != Sk.builtin.NotImplemented.NotImplemented$) {
-            return Sk.misceval.isTrue(ret);
+            return ret;
         }
     }
 
@@ -446,17 +446,17 @@ Sk.misceval.richCompareBool = function (v, w, op) {
             if (Sk.builtin.checkNumber(ret)) {
                 ret = Sk.builtin.asnum$(ret);
                 if (op === "Eq") {
-                    return ret === 0;
+                    return new Sk.builtin.bool(ret === 0);
                 } else if (op === "NotEq") {
-                    return ret !== 0;
+                    return new Sk.builtin.bool(ret !== 0);
                 } else if (op === "Lt") {
-                    return ret < 0;
+                    return new Sk.builtin.bool(ret < 0);
                 } else if (op === "Gt") {
-                    return ret > 0;
+                    return new Sk.builtin.bool(ret > 0);
                 } else if (op === "LtE") {
-                    return ret <= 0;
+                    return new Sk.builtin.bool(ret <= 0);
                 } else if (op === "GtE") {
-                    return ret >= 0;
+                    return new Sk.builtin.bool(ret >= 0);
                 }
             }
 
@@ -476,17 +476,17 @@ Sk.misceval.richCompareBool = function (v, w, op) {
             if (Sk.builtin.checkNumber(ret)) {
                 ret = Sk.builtin.asnum$(ret);
                 if (op === "Eq") {
-                    return ret === 0;
+                    return new Sk.builtin.bool(ret === 0);
                 } else if (op === "NotEq") {
-                    return ret !== 0;
+                    return new Sk.builtin.bool(ret !== 0);
                 } else if (op === "Lt") {
-                    return ret > 0;
+                    return new Sk.builtin.bool(ret > 0);
                 } else if (op === "Gt") {
-                    return ret < 0;
+                    return new Sk.builtin.bool(ret < 0);
                 } else if (op === "LtE") {
-                    return ret >= 0;
+                    return new Sk.builtin.bool(ret >= 0);
                 } else if (op === "GtE") {
-                    return ret <= 0;
+                    return new Sk.builtin.bool(ret <= 0);
                 }
             }
 
@@ -506,22 +506,22 @@ Sk.misceval.richCompareBool = function (v, w, op) {
         // comparing None with None or True/False with True/False
 
         if (op === "Eq") {
-            return v.v === w.v;
+            return new Sk.builtin.bool(v.v === w.v);
         }
         if (op === "NotEq") {
-            return v.v !== w.v;
+            return new Sk.builtin.bool(v.v !== w.v);
         }
         if (op === "Gt") {
-            return v.v > w.v;
+            return new Sk.builtin.bool(v.v > w.v);
         }
         if (op === "GtE") {
-            return v.v >= w.v;
+            return new Sk.builtin.bool(v.v >= w.v);
         }
         if (op === "Lt") {
-            return v.v < w.v;
+            return new Sk.builtin.bool(v.v < w.v);
         }
         if (op === "LtE") {
-            return v.v <= w.v;
+            return new Sk.builtin.bool(v.v <= w.v);
         }
     }
 
@@ -529,15 +529,15 @@ Sk.misceval.richCompareBool = function (v, w, op) {
     // handle equality comparisons for any remaining objects
     if (op === "Eq") {
         if ((v instanceof Sk.builtin.str) && (w instanceof Sk.builtin.str)) {
-            return v.v === w.v;
+            return new Sk.builtin.bool(v.v === w.v);
         }
-        return v === w;
+        return new Sk.builtin.bool(v === w);
     }
     if (op === "NotEq") {
         if ((v instanceof Sk.builtin.str) && (w instanceof Sk.builtin.str)) {
-            return v.v !== w.v;
+            return new Sk.builtin.bool(v.v !== w.v);
         }
-        return v !== w;
+        return new Sk.builtin.bool(v !== w);
     }
 
     vname = Sk.abstr.typeName(v);

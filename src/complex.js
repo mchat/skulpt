@@ -702,9 +702,7 @@ Sk.builtin.complex.prototype.tp$richcompare = function (w, op) {
 
         // if true, the complex number has just a real part
         if (_imag === 0.0) {
-            equal = Sk.misceval.richCompareBool(new Sk.builtin.float_(_real), w, op);
-            result = new Sk.builtin.bool( equal);
-            return result;
+            return Sk.misceval.richCompareBool(new Sk.builtin.float_(_real), w, op);
         } else {
             equal = false;
         }

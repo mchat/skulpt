@@ -65,7 +65,7 @@ Sk.builtin.dict.prototype.key$lookup = function (bucket, key) {
     for (i = 0; i < bucket.items.length; i++) {
         item = bucket.items[i];
         eq = Sk.misceval.richCompareBool(item.lhs, key, "Eq");
-        if (eq) {
+        if (Sk.misceval.isTrue(eq)) {
             return item;
         }
     }
@@ -81,7 +81,7 @@ Sk.builtin.dict.prototype.key$pop = function (bucket, key) {
     for (i = 0; i < bucket.items.length; i++) {
         item = bucket.items[i];
         eq = Sk.misceval.richCompareBool(item.lhs, key, "Eq");
-        if (eq) {
+        if (Sk.misceval.isTrue(eq)) {
             bucket.items.splice(i, 1);
             this.size -= 1;
             return item;
@@ -518,7 +518,7 @@ Sk.builtin.dict.prototype.ob$eq = function (other) {
         v = this.mp$subscript(k);
         otherv = other.mp$subscript(k);
 
-        if (!Sk.misceval.richCompareBool(v, otherv, "Eq")) {
+        if (!Sk.misceval.isTrue(Sk.misceval.richCompareBool(v, otherv, "Eq"))) {
             return Sk.builtin.bool.false$;
         }
     }

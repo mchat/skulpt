@@ -174,7 +174,7 @@ Sk.builtin.tuple.prototype.tp$richcompare = function (w, op) {
 
     for (i = 0; i < vl && i < wl; ++i) {
         k = Sk.misceval.richCompareBool(v[i], w[i], "Eq");
-        if (!k) {
+        if (!Sk.misceval.isTrue(k)) {
             break;
         }
     }
@@ -211,7 +211,7 @@ Sk.builtin.tuple.prototype.tp$richcompare = function (w, op) {
 
     // or, compare the differing element using the proper operator
     //print("  tup rcb end", i, v[i] instanceof Sk.builtin.str, JSON.stringify(v[i]), w[i] instanceof Sk.builtin.str, JSON.stringify(w[i]), op);
-    return Sk.misceval.richCompareBool(v[i], w[i], op);
+    return Sk.misceval.isTrue(Sk.misceval.richCompareBool(v[i], w[i], op));
 };
 
 Sk.builtin.tuple.prototype.sq$concat = function (other) {
@@ -229,7 +229,7 @@ Sk.builtin.tuple.prototype.sq$contains = function (ob) {
     var it, i;
 
     for (it = this.tp$iter(), i = it.tp$iternext(); i !== undefined; i = it.tp$iternext()) {
-        if (Sk.misceval.richCompareBool(i, ob, "Eq")) {
+        if (Sk.misceval.isTrue(Sk.misceval.richCompareBool(i, ob, "Eq"))) {
             return true;
         }
     }
@@ -250,7 +250,7 @@ Sk.builtin.tuple.prototype["index"] = new Sk.builtin.func(function (self, item) 
     var len = self.v.length;
     var obj = self.v;
     for (i = 0; i < len; ++i) {
-        if (Sk.misceval.richCompareBool(obj[i], item, "Eq")) {
+        if (Sk.misceval.isTrue(Sk.misceval.richCompareBool(obj[i], item, "Eq"))) {
             return new Sk.builtin.int_(i);
         }
     }
@@ -263,7 +263,7 @@ Sk.builtin.tuple.prototype["count"] = new Sk.builtin.func(function (self, item) 
     var obj = self.v;
     var count = 0;
     for (i = 0; i < len; ++i) {
-        if (Sk.misceval.richCompareBool(obj[i], item, "Eq")) {
+        if (Sk.misceval.isTrue(Sk.misceval.richCompareBool(obj[i], item, "Eq"))) {
             count += 1;
         }
     }
