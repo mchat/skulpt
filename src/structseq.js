@@ -81,7 +81,9 @@ Sk.builtin.make_structseq = function (module, name, fields) {
         return new Sk.builtin.str(nm + "(" + ret + ")");
     };
     cons.prototype.tp$setattr = function (name, value) {
-        var i = flds.indexOf(name);
+        goog.asserts.assert(name instanceof Sk.builtin.str);
+        var nameJS = name.v;
+        var i = flds.indexOf(nameJS);
         if (i >= 0) {
             this.v[i] = value;
         }

@@ -465,7 +465,7 @@ Sk.importModuleInternal_ = function (name, dumpJS, modname, suppliedPyBody, canS
                 // if we were a dotted name, then we want to return the top-most
                 // package. we store ourselves into our parent as an attribute
                 parentModule = Sk.sysmodules.mp$subscript(parentModName);
-                parentModule.tp$setattr(modNameSplit[modNameSplit.length - 1], module);
+                parentModule.tp$setattr(new Sk.builtin.str(modNameSplit[modNameSplit.length - 1]), module);
                 return toReturn;
             }
 

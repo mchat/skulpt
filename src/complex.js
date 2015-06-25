@@ -792,13 +792,8 @@ Sk.builtin.complex.prototype.tp$getattr = function (name) {
 
 
 Sk.builtin.complex.prototype.tp$setattr = function (name, value) {
-    if (name != null && (Sk.builtin.checkString(name) || typeof name === "string")) {
-        var _name = name;
-
-        // get javascript string
-        if (Sk.builtin.checkString(name)) {
-            _name = Sk.ffi.remapToJs(name);
-        }
+    if (name != null && Sk.builtin.checkString(name)) {
+        var _name = Sk.ffi.remapToJs(name);
 
         if (_name === "real" || _name === "imag") {
             throw new Sk.builtin.AttributeError("readonly attribute");

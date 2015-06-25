@@ -451,7 +451,9 @@ Sk.builtin.type.prototype.tp$getattr = function (name) {
 
 Sk.builtin.type.prototype.tp$setattr = function (name, value) {
     // class attributes are direct properties of the object
-    this[name] = value;
+    goog.asserts.assert(name instanceof Sk.builtin.str);
+    var nameJS = name.v;
+    this[nameJS] = value;
 };
 
 Sk.builtin.type.typeLookup = function (type, name) {

@@ -723,12 +723,12 @@ Compiler.prototype.vexpr = function (e, data, augvar, augsubs) {
                     // so this will never *not* execute. But it could, if Sk.abstr.numberInplaceBinOp were fixed.
                     out("$ret = undefined;");
                     out("if(", data, "!==undefined){");
-                    out("$ret = Sk.abstr.sattr(", augvar, ",'", mangled, "',", data, ", true);");
+                    out("$ret = Sk.abstr.sattr(", augvar, ", new Sk.builtin.str('", mangled, "'),", data, ", true);");
                     out("}");
                     this._checkSuspension(e);
                     break;
                 case Store:
-                    out("$ret = Sk.abstr.sattr(", val, ",'", mangled, "',", data, ", true);");
+                    out("$ret = Sk.abstr.sattr(", val, ", new Sk.builtin.str('", mangled, "'),", data, ", true);");
                     this._checkSuspension(e);
                     break;
                 case Del:

@@ -89,30 +89,31 @@ goog.exportSymbol("Sk.builtin.object.prototype.GenericPythonGetAttr", Sk.builtin
 
 Sk.builtin.object.prototype.GenericSetAttr = function (name, value) {
     var objname = Sk.abstr.typeName(this);
-    var pyname;
+    var nameJS;
     var dict;
-    goog.asserts.assert(typeof name === "string");
+    goog.asserts.assert(name instanceof Sk.builtin.str);
     // todo; lots o' stuff
+    
+    nameJS = name.v;
 
     dict = this["$d"] || this.constructor["$d"];
 
     if (dict.mp$ass_subscript) {
-        pyname = new Sk.builtin.str(name);
-
+        
         if (this instanceof Sk.builtin.object && !(this.ob$type.sk$klass) &&
-            dict.mp$lookup(pyname) === undefined) {
+            dict.mp$lookup(name) === undefined) {
             // Cannot add new attributes to a builtin object
-            throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + name + "'");
+            throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + nameJS + "'");
         }
-        dict.mp$ass_subscript(new Sk.builtin.str(name), value);
+        dict.mp$ass_subscript(name, value);
     } else if (typeof dict === "object") {
-        dict[name] = value;
+        dict[nameJS] = value;
     }
 };
 goog.exportSymbol("Sk.builtin.object.prototype.GenericSetAttr", Sk.builtin.object.prototype.GenericSetAttr);
 
 Sk.builtin.object.prototype.GenericPythonSetAttr = function(self, name, value) {
-    return Sk.builtin.object.prototype.GenericSetAttr.call(self, name.v, value);
+    return Sk.builtin.object.prototype.GenericSetAttr.call(self, name, value);
 };
 goog.exportSymbol("Sk.builtin.object.prototype.GenericPythonSetAttr", Sk.builtin.object.prototype.GenericPythonSetAttr);
 

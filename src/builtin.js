@@ -776,7 +776,7 @@ Sk.builtin.setattr = function setattr (obj, name, value) {
         throw new Sk.builtin.TypeError("attribute name must be string");
     }
     if (obj.tp$setattr) {
-        obj.tp$setattr(Sk.ffi.remapToJs(name), value);
+        obj.tp$setattr(name, value);
     } else {
         throw new Sk.builtin.AttributeError("object has no attribute " + Sk.ffi.remapToJs(name));
     }

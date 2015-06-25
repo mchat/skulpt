@@ -848,8 +848,9 @@ Sk.abstr.gattr = function (obj, name, canSuspend) {
 };
 goog.exportSymbol("Sk.abstr.gattr", Sk.abstr.gattr);
 
-Sk.abstr.sattr = function (obj, nameJS, data, canSuspend) {
+Sk.abstr.sattr = function (obj, name, data, canSuspend) {
     var objname = Sk.abstr.typeName(obj), r, setf;
+    var nameJS = name.v;
 
     if (obj === null) {
         throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + nameJS + "'");
@@ -858,13 +859,13 @@ Sk.abstr.sattr = function (obj, nameJS, data, canSuspend) {
     if (obj.tp$getattr !== undefined) {
         setf = obj.tp$getattr(Sk.builtin.str.$setattr);
         if (setf !== undefined) {
-            r = Sk.misceval.callsimOrSuspend(setf, new Sk.builtin.str(nameJS), data);
+            r = Sk.misceval.callsimOrSuspend(setf, name, data);
             return canSuspend ? r : Sk.misceval.retryOptionalSuspensionOrThrow(r);
         }
     }
 
     if (obj.tp$setattr !== undefined) {
-        obj.tp$setattr(nameJS, data);
+        obj.tp$setattr(name, data);
     } else {
         throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + nameJS + "'");
     }

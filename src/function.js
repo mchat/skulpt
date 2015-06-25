@@ -269,7 +269,8 @@ Sk.builtin.func.prototype.tp$getattr = function (key) {
     return this[key.v];
 };
 Sk.builtin.func.prototype.tp$setattr = function (key, value) {
-    this[key] = value;
+    goog.asserts.assert(key instanceof Sk.builtin.str);
+    this[key.v] = value;
 };
 
 //todo; investigate why the other doesn't work
