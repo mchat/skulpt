@@ -421,6 +421,13 @@ Sk.builtin.type.prototype.tp$getattr = function (name) {
 
     goog.asserts.assert(name instanceof Sk.builtin.str);
 
+    if (this["$d"]) {
+        res = this["$d"].mp$lookup(name);
+        if (res !== undefined) {
+            return res;
+        }
+    }
+
     descr = Sk.builtin.type.typeLookup(tp, name);
 
     //print("type.tpgetattr descr", descr, descr.tp$name, descr.func_code, name);
@@ -428,13 +435,6 @@ Sk.builtin.type.prototype.tp$getattr = function (name) {
         f = descr.ob$type.tp$descr_get;
         // todo;if (f && descr.tp$descr_set) // is a data descriptor if it has a set
         // return f.call(descr, this, this.ob$type);
-    }
-
-    if (this["$d"]) {
-        res = this["$d"].mp$lookup(name);
-        if (res !== undefined) {
-            return res;
-        }
     }
 
     if (f) {
